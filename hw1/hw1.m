@@ -69,7 +69,8 @@ stem(n, x_n)
 title('Signal x[n]') 
 xlabel('n')
 ylabel('x[n] = s[n] + w[n]')
-ylim([-5 10])
+ylim([-5 10]) 
+print -deps fig1
 
 % plot s[n] and y[n] to observe the effects of filtering
 figure(2);
@@ -85,6 +86,7 @@ title('Signal y[n]')
 xlabel('n')
 ylabel('5-point moving MA of x[n]')
 ylim([-5 10])
+print -deps fig2
 
 % plot results MA filter, y_int[n]
 figure(3);
@@ -108,8 +110,10 @@ stem(n, y_int6)
 title('Signal y-int[n] MA 6')
 xlabel('n')
 ylabel('y-int[n]')
+print -deps fig3
 
 % Is the interference completely removed?
 % No it is not completely removed or y-int6[n] = s[n] 
 % We would have to use a Nulling filter to remove the frequency
 %
+
