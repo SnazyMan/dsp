@@ -12,19 +12,21 @@ h_n = [0.3 1 0.7 0.3 .02];
 s_n = randi([0 1], 1, s_length); %generate random binary sequence
 s_n(~s_n) = -1; %replace all 0s with -1s
 d_n = circshift(s_n, t_delay);
+w_n = zeros(1, M);
 
 x_n = awgn(conv(s_n, h_n, 'same'), SNR);
 
 %Training
-w_n = train_adaptive_filter(step_size, d_n, x_n, M, lms_iters);
+w_n = least_mean_square(step_size, w_n, d_n, x_n, M, lms_iters);
+%train_adaptive_filter(step_size, d_n, x_n, M, lms_iters);
 err_sum = 0;
 
 %AVG Err over each window
-for i = 0:floor(s_length/M)-1
-    err_sum = err_sum + immse(d_n((i*M + 1):((i+1)*M))...
-        ,w_n.*x_n((i*M + 1):((i+1)*M)));
-end
-fprintf("Error found to be %f\n", err_sum/floor(s_length/M));
+%for i = 0:floor(s_length/M)-1
+%     err_sum = err_sum + immse(d_n((i*M + 1):((i+1)*M))...
+%        ,w_n.*x_n((i*M + 1):((i+1)*M)));
+%end
+fprintf("Error found to be %f\n", immse(conv(x_n, w_n, 'same'), d_n));
 %subplot(3, 1, 1);
 %plot(h_n);
 %subplot(3, 1, 2);
