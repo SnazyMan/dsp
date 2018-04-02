@@ -1,4 +1,4 @@
-function w_n = least_mean_square(step_size, w_n, d_n, x_n, M, iters)
+function w_n = least_mean_square(step_size, w_n, d_n, x_n, M)
 [ignore, x_n_length] = size(x_n);
 
 for i = 1:x_n_length-M

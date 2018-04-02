@@ -1,35 +1,33 @@
+rng('default');
 %%%
 %SETUP
 %%%
 SNR = 30; %SNR of additive white noise in dB
 s_length = 1000;
 t_delay = 2; %units of delay for adaptive filter
-step_size = .01;
-lms_iters = 1000;
+step_size = .001;
+lms_iters = 1;
 M = 23;
 
 h_n = [0.3 1 0.7 0.3 .02];
 s_n = randi([0 1], 1, s_length); %generate random binary sequence
 s_n(~s_n) = -1; %replace all 0s with -1s
-d_n = circshift(s_n, t_delay);
-w_n = zeros(1, M);
 
-x_n = awgn(conv(s_n, h_n, 'same'), SNR);
+%need to clarify if the signal is circshifted or zero padded
+%d_n = circshift(s_n, t_delay);
+d_n = [zeros(1,t_delay) s_n(1:end-t_delay)];
+
+%%%For testing purposes, let's ignore SNR
+%x_n = awgn(conv(s_n, h_n, 'same'), SNR); %awgn expects our signals to be
+%in dB
+x_n = conv(s_n, h_n, 'same');
 
 %Training
-w_n = least_mean_square(step_size, w_n, d_n, x_n, M, lms_iters);
-%train_adaptive_filter(step_size, d_n, x_n, M, lms_iters);
-err_sum = 0;
+w_n = train_adaptive_filter(step_size, d_n, x_n, M, lms_iters);
 
-%AVG Err over each window
-%for i = 0:floor(s_length/M)-1
-%     err_sum = err_sum + immse(d_n((i*M + 1):((i+1)*M))...
-%        ,w_n.*x_n((i*M + 1):((i+1)*M)));
-%end
-fprintf("Error found to be %f\n", immse(conv(x_n, w_n, 'same'), d_n));
-%subplot(3, 1, 1);
-%plot(h_n);
-%subplot(3, 1, 2);
-%plot(s_n);
-%subplot(3,1,3);
-%plot(conv(s_n, h_n, 'same'));
+corrected_signal = sign(conv(x_n, w_n, 'same')); %not sure if sign is needed here
+fprintf("Error found to be %f\n", immse(corrected_signal, d_n));
+subplot(2,1,1);
+stem(corrected_signal(100:120));
+subplot(2,1,2);
+stem(d_n(100:120));
