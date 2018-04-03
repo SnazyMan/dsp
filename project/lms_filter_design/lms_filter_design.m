@@ -5,9 +5,8 @@
 clc;clear;close all;
 
 M = 128; % desired filter length
-K = 60000; % length of input sequence
-L = linspace(0, .5, 1000); % number of frequencies in input sequence
-iter = 100; % number of iterations for LMS algorithm
+K = 1000; % length of input sequence
+L = linspace(0, .5, 100); % number of frequencies in input sequence
 h_lms = zeros([1,M]); % initial settings for h_lms
 mu = .0001; % learning rate for gradient descent 
 
@@ -15,16 +14,21 @@ mu = .0001; % learning rate for gradient descent
 x_in = generate_input(K, L);
 x_d = generate_desired(K, L);
 
-for i = M:length(x_in)-M
-    
-    % calculate output of filter 
-    y = h_lms * x_in(i:i+M-1)';
-        
-    % compute error wrt to desired
-    err(i) = (x_d(i) - y);
+% pad for convolution - ensure desired and output are matched
+x_in = [zeros(1,floor((M-1)/2)) x_in zeros(1,ceil((M-1)/2))];
 
+% LMS algorithm to find coeficients h_lms that approximate
+% desired filter
+for i = (M+1):(length(x_in)-M-1)
+     
+    % calculate output of filter 
+    y = h_lms * x_in(i-M+1:i)';
+    
+    % compute error wrt to desired
+    err(i) = (x_d(i-M+1) - y);
+    
     % update coefficients
-    h_lms = h_lms + mu * x_in(i:i+M-1) * err(i);
+    h_lms = h_lms + mu * x_in(i-M+1:i) * err(i);
 end
 
 % plot impulse response
