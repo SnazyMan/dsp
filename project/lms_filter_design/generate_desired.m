@@ -1,5 +1,5 @@
 function x_d  = generate_desired(K, L)
-% generate_input
+% generate_desired
 % input K - length of generated sequence
 % input L - vector of frequencies present in output
 % ouput x_d - filtered sequence of length K with L frequencies
