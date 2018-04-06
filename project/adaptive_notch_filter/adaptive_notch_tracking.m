@@ -3,9 +3,12 @@
 
 clc;clear;close all;
 
+%load('speech.mat');
+%load('speech_fs.mat');
+
 mu = .0001; % learning rate
 f_d = .1;  % desired frequency(s)
-l = 10000; % length of signals
+l = 1000; %length(data); % length of signals
 r = .9; % rejection bandwidth
 a = zeros([1 l]); % a = -2cosf_i(w)
 
@@ -14,13 +17,15 @@ n = 1:l;
 x_d = awgn(sin(2*pi*f_d*n),0);
 
 % generate interference signal (very low signal to interference ratio)
-f0 = .2;
-f1 = .4;
+f0 = .3;
+f1 = .35;
 t = 1:l;
 t1 = l;
-x_i = 30*chirp(t,f0,t1,f1);
+x_ispeech = 30*chirp(t,f0,t1,f1);
+%x_n = (data'/2) + x_ispeech;
 
 % mix signals
+x_i = 30*chirp(t,f0,t1,f1);
 x_n = x_d + x_i;
 
 %initialize output vector
