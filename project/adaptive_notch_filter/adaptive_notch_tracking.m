@@ -6,10 +6,10 @@ clc;clear;close all;
 %load('speech.mat');
 %load('speech_fs.mat');
 
-mu = .0001; % learning rate
+mu = .0005; % learning rate
 f_d = .1;  % desired frequency(s)
 l = 1000; %length(data); % length of signals
-r = .9; % rejection bandwidth
+r = .90; % rejection bandwidth
 a = zeros([1 l]); % a = -2cosf_i(w)
 
 n = 1:l;
@@ -91,11 +91,12 @@ plot(w/(2*pi),abs(H))
 title('Magnitude of learned filter');
 xlabel('frequency (radians)');
 ylabel('magnitude');
+print -depsc track_inout
 
 % plot a which is frequncy of notch filter (to observe how well it adapts)
 figure;
 plot(acos(a/-2));
 title('adaptive filter frequency');
-xlabel('time');
+xlabel('time samples (n)');
 ylabel('frequency where notch filter is ... notched');
-
+print -depsc track_a

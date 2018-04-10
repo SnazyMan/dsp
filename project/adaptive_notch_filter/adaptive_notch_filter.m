@@ -7,11 +7,11 @@ clc;clear;close all;
 load('speech.mat');
 load('speech_fs.mat');
 
-mu = .0001; % learning rate
+mu = .01; % learning rate
 a = 0; % a = -2cos(w)
-f_d = .1;  % desired frequency(s)
+f_d = .3;  % desired frequency(s)
 f_i = .1;  % interference frequency
-l = 1000; % length of signals
+l = 208000; % length of signals
 r = .95; % rejection bandwidth
 
 n = 1:l;
@@ -19,7 +19,7 @@ n = 1:l;
 x_d = awgn(sin(2*pi*f_d*n),0);
 
 % generate interference signal (very low signal to interference ratio)
-x_i = 10*sin(2*pi*f_i*n);
+x_i = 2*sin(2*pi*f_i*n);
 n= 1:length(data);
 x_ispeech = .5*sin(2*pi*f_i*n);
 x_n = (data'/2) + x_ispeech;
@@ -65,6 +65,7 @@ ylabel('magnitude');
 w = linspace(-pi,pi,l*2);
 H = abs(fftshift(fft(x_n, l*2)));
 figure;
+subplot(2,1,1)
 plot(w,H)
 title('Magnitude of desired + interference signal');
 xlabel('frequency (radians)');
@@ -73,11 +74,12 @@ ylabel('magnitude');
 % plot frequency response of output signal
 w = linspace(-pi,pi,l*2);
 H = abs(fftshift(fft(y_n, l*2)));
-figure;
+subplot(2,1,2)
 plot(w,H)
 title('Magnitude of output signal');
 xlabel('frequency (radians)');
 ylabel('magnitude');
+print -depsc adaptive_notch_inout
 
 % frequency response of learned filter ** normalized so freq appears 0 to
 % .5
@@ -87,6 +89,7 @@ aa = [1 r*a r*r];
 figure;
 plot(w/(2*pi),abs(H))
 title('Magnitude of learned filter');
-xlabel('frequency (radians)');
+xlabel('Normalized frequency (radians / 2*pi)');
 ylabel('magnitude');
+print -depsc adaptive_notch_learned
 

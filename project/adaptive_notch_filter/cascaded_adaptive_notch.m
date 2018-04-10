@@ -3,12 +3,12 @@
 
 clc;clear;close all;
 
-mu = .0001; % learning rate
+mu = .001; % learning rate
 f_d = .1;  % desired frequency(s)
 f_i = .25; % interference frequency 1
 f_i2 = .4; % interference frequency 2
 l = 10000; % length of signals
-r = .90; % rejection bandwidth
+r = .95; % rejection bandwidth
 a1 = 0; % a = -2cosf_i(w)
 a2 = 0;
 
