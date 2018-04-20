@@ -6,6 +6,7 @@ clear all;
 pr_fb_order = 9;
 
 f_p = 0.4;
+n_levels = 4;
 
 img_man = im2double(imread('man.gif'));
 [man_row, man_col] = size(img_man);
@@ -44,9 +45,13 @@ x_hh_n = imresize(x_hh_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 x_lh_n = imresize(x_lh_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 x_hl_n = imresize(x_hl_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 
-x_hh_n = imbinarize(abs(x_hh_n))/4;
-x_lh_n = imbinarize(abs(x_lh_n))/4;
-x_hl_n = imbinarize(abs(x_hl_n))/4;
+thresh_hh = multithresh(abs(x_hh_n),n_levels-1);
+thresh_lh = multithresh(abs(x_lh_n),n_levels-1);
+thresh_hl = multithresh(abs(x_hl_n),n_levels-1);
+
+x_hh_n = (imquantize(abs(x_hh_n), thresh_hh)-1)/((n_levels-1)*4);
+x_lh_n = (imquantize(abs(x_lh_n), thresh_lh)-1)/((n_levels-1)*4);
+x_hl_n = (imquantize(abs(x_hl_n), thresh_hl)-1)/((n_levels-1)*4);
 
 y_ll_temp = conv2(g0,g0,imresize(x_ll_n,2));
 y_hh_temp = conv2(g1,g1,demod_exp_up.*(demod_exp_up.*imresize(x_hh_n,2))');
@@ -75,4 +80,4 @@ subplot(2,2,4);
 imagesc([-1,1],[-1,1],100*log(1+ abs(fftshift(x_recon_ejw))));
 colormap(gray);
 
-err_one_bit = immse(img_man,x_recon);
+err_two_bit = immse(img_man,x_recon);

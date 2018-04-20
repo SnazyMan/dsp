@@ -6,6 +6,7 @@ clear all;
 pr_fb_order = 9;
 
 f_p = 0.4;
+n_levels = 3;
 
 img_man = im2double(imread('man.gif'));
 [man_row, man_col] = size(img_man);
@@ -35,22 +36,22 @@ X = man_row - man_row/2;
 %%%
 
 x_ll_temp = 0.25*conv2(h0,h0,img_man);
-x_hh_temp = 0.25*(demod_exp_down).*((demod_exp_down).*conv2(h1,h1,img_man))';
-x_lh_temp = 0.25*(demod_exp_down).*conv2(h1,h0,img_man)';
-x_hl_temp = 0.25*(demod_exp_down).*conv2(h0,h1,img_man);
+x_hh_temp = (demod_exp_down).*((demod_exp_down).*conv2(h1,h1,img_man))';
+x_lh_temp = (demod_exp_down).*conv2(h1,h0,img_man)';
+x_hl_temp = (demod_exp_down).*conv2(h0,h1,img_man);
 
 x_ll_n = imresize(x_ll_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 x_hh_n = imresize(x_hh_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 x_lh_n = imresize(x_lh_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 x_hl_n = imresize(x_hl_temp(T-M/2:V-M/2, T-M/2:V-M/2), 0.5);
 
-thresh_hh = multithresh(abs(x_hh_n),3);
-thresh_lh = multithresh(abs(x_lh_n),3);
-thresh_hl = multithresh(abs(x_hl_n),3);
+thresh_hh = multithresh(abs(x_hh_n),n_levels-1);
+thresh_lh = multithresh(abs(x_lh_n),n_levels-1);
+thresh_hl = multithresh(abs(x_hl_n),n_levels-1);
 
-x_hh_n = (imquantize(abs(x_hh_n), thresh_hh)-1)/3;
-x_lh_n = (imquantize(abs(x_lh_n), thresh_lh)-1)/3;
-x_hl_n = (imquantize(abs(x_hl_n), thresh_hl)-1)/3;
+x_hh_n = (imquantize(abs(x_hh_n), thresh_hh)-1)/((n_levels-1)*4);
+x_lh_n = (imquantize(abs(x_lh_n), thresh_lh)-1)/((n_levels-1)*4);
+x_hl_n = (imquantize(abs(x_hl_n), thresh_hl)-1)/((n_levels-1)*4);
 
 y_ll_temp = conv2(g0,g0,imresize(x_ll_n,2));
 y_hh_temp = conv2(g1,g1,demod_exp_up.*(demod_exp_up.*imresize(x_hh_n,2))');
