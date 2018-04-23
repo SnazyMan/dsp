@@ -52,6 +52,7 @@ ylabel('Magnitude_{dB}');
 subplot(3,1,3);
 zplane(h_n,1);
 title('Pole-Zero Plot of Noisy Channel');
+print -depsc channel_characteristics
 figure;
 subplot(2,1,1);
 stem(m,w_n);
@@ -63,7 +64,7 @@ plot(w,mag2db(abs(w_ejw)));
 title('Frequency Response of Adaptive Filter');
 xlabel('Normalized Frequency');
 ylabel('Magnitude_{dB}');
-
+print -depsc af_characteristics
 %Generate Input Data
 s_n = randi([0 1], 1, s_length); %generate random binary sequence
 s_n(~s_n) = -1; %replace all 0s with -1s
@@ -96,7 +97,7 @@ plot(w,mag2db(abs(equalized_channel_ejw)));
 title('Frequency Response of Equalized Channel');
 xlabel('Normalized Frequency');
 ylabel('Magnitude_{dB}');
-
+print -depsc equalized_characteristics
 err = zeros(1,20);
 
 %Change Filter Order
@@ -111,7 +112,7 @@ title('Effects of Adaptive Filter Order');
 xlabel('Adaptive Filter Order');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
 M = 25; %Reset to Default
-
+print -depsc af_order_effects
 
 err = zeros(1,27);
 
@@ -127,6 +128,7 @@ title('Effects of LMS Step Size');
 xlabel('Step Size');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
 step_size=0.01; %Reset to Default
+print -depsc lms_ss_effects
 
 err = zeros(1,296);
 
@@ -154,6 +156,7 @@ s_n(~s_n) = -1; %replace all 0s with -1s
     
 d_n = [zeros(1,t_delay) s_n(1:end-t_delay)];
 x_n = awgn(conv(s_n, h_n, 'same'), SNR);
+print -depsc training_length_effects
 
 err = zeros(1,15);
 
@@ -172,7 +175,7 @@ xlabel('SNR (dB)');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
 
 SNR = 25; %Reset to Default
-
+print -depsc snr_effects
 err = zeros(1,7);
 
 %Change Unit Sample Response
@@ -187,5 +190,6 @@ plot([1:1:7],err, 'o');
 title('Effects of Unit Sample Response Order');
 xlabel('Unit Sample Response Order');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
+print -depsc sample_response_order_effects
 h_n = [0.3 1 0.7 0.3 .02]; %Reset to Default
 
