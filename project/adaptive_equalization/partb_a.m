@@ -107,7 +107,9 @@ for M = 10:1:30
     err(M-9) = immse(corrected_signal, d_n);
 end
 figure;
+
 plot([10:1:30],err,'o');
+
 title('Effects of Adaptive Filter Order');
 xlabel('Adaptive Filter Order');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
