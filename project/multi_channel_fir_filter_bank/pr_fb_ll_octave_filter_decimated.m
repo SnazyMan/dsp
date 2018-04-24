@@ -178,9 +178,13 @@ title('Reconstructed Image');
 subplot(2,2,3);
 imagesc([-1,1],[-1,1],100*log(1+ abs(fftshift(x_ejw))));
 title({'Original Image', 'Frequency Components'});
+xlabel('Normalized Frequency w_{col}');
+ylabel('Normalized Frequency w_{row}');
 colormap(gray);
 subplot(2,2,4);
 imagesc([-1,1],[-1,1],100*log(1+ abs(fftshift(x_recon_ejw))));
 colormap(gray);
 title({'Reconstructed Image', 'Frequency Components'});
+xlabel('Normalized Frequency w_{col}');
+ylabel('Normalized Frequency w_{row}');
 print -depsc pr_fb_oct_decimated_comparison
