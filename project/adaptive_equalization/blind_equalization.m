@@ -45,12 +45,6 @@ delay = finddelay(s_n, sign(corrected_signal)); %estimate the system lag
 
 g_ejw = fftshift(fft(g_n, NFFT));
 
-%align corrected signal with input signal to determine error
-aligned_cs = corrected_signal(delay+1:end);
-aligned_sn = s_n(1:end-delay);
-
-fprintf("Error found to be %f\n", immse(aligned_cs, aligned_sn));
-
 figure;
 subplot(3,1,1);
 stem(n,h_n);
@@ -80,6 +74,10 @@ xlabel('Normalized Frequency');
 ylabel('Magnitude_{dB}');
 print -depsc af_characteristics_blind_eq
 
+
+%Generate Input Data
+s_n = randi([0 1], 1, s_length); %generate random binary sequence
+s_n(~s_n) = -1; %replace all 0s with -1s
 %add noise
 x_n = awgn(conv(s_n, h_n, 'same'), SNR);
 
