@@ -114,16 +114,16 @@ ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
 M = 25; %Reset to Default
 print -depsc af_order_effects
 
-err = zeros(1,27);
+err = zeros(1,29);
 
 %Change Step Size
-for step_size=0.001:0.001:0.027
+for step_size=0.001:0.001:0.029
     w_n = train_adaptive_filter(step_size, d_n, x_n, M, lms_iters);
     corrected_signal = conv(x_n, w_n, 'same'); 
     err(int16(step_size*1000)) = immse(corrected_signal, d_n);
 end
 figure;
-plot([0.001:0.001:0.027], err);
+plot([0.001:0.001:0.029], err);
 title('Effects of LMS Step Size');
 xlabel('Step Size');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
