@@ -41,8 +41,6 @@ for i = 1:s_length
     g_n = constant_modulus(step_size, g_n, x_n); %update AF coeficients
 end
 
-delay = finddelay(s_n, sign(corrected_signal)); %estimate the system lag
-
 g_ejw = fftshift(fft(g_n, NFFT));
 
 figure;
@@ -85,6 +83,7 @@ fprintf("Uncorrected Error found to be %f\n", immse(s_n, x_n));
 
 %After Convergence
 corrected_signal = conv(x_n, g_n, 'same'); 
+
 delay = finddelay(s_n, sign(corrected_signal)); %estimate the system lag
 
 %align corrected signal with input signal to determine error
@@ -109,6 +108,47 @@ title('Frequency Response of Equalized Channel');
 xlabel('Normalized Frequency');
 ylabel('Magnitude_{dB}');
 print -depsc equalized_characteristics_blind_eq
+
+err = zeros(1,100);
+
+%Change Step Size
+for step_size=0.0001:0.0001:0.01
+h_n = [0.3 1 0.7 0.2 0.3 zeros(1,M-N)];
+    %Initialize Arrays we will be interested in
+    s_n_window = zeros(1,M); %window of input signal
+    x_n = zeros(1,M); %output of noisy channel
+    corrected_signal = zeros(1,s_length); %store results of blind equalization
+
+    %In order for CM to converge, initialize filter with a non-zero value
+    g_n = ones(1,M);
+
+    %Run blind equalization over an optimal length first to show convergence
+    for i = 1:s_length
+        s_n_window = [ awgn(s_n(i), SNR) s_n_window(1:M-1)]; %right shift for new input
+        x_n = [s_n_window*h_n' x_n(1:M-1)]; %right shift for channel output
+        corrected_signal(i) = x_n*g_n'; %store history for analysis of error
+        g_n = constant_modulus(step_size, g_n, x_n); %update AF coeficients
+    end
+    
+    %After Convergence
+    delay = finddelay(s_n, corrected_signal); %estimate the system lag
+
+    %align corrected signal with input signal to determine error
+    aligned_cs = corrected_signal(delay+1:end);
+    aligned_sn = s_n(1:end-delay);
+    err(int16(step_size*10000)) = immse(aligned_cs, aligned_sn);
+    
+end
+
+figure;
+
+plot([0.0001:0.0001:0.01],err);
+
+title('Effects of LMS Step Size');
+xlabel('Step Size');
+ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
+print -depsc lms_ss_effects_blind_eq
+step_size=0.001; %Reset to Default
 
 err = zeros(1,14);
 
