@@ -227,7 +227,7 @@ for s_length=1000:1000:60000
 end
 
 figure;
-plot([1000:1000:50000],err, 'o');
+plot([1000:1000:60000],err, 'o');
 title('Effects of Training Length');
 xlabel('Input Signal s[n] Length');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
