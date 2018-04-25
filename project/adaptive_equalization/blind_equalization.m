@@ -74,7 +74,8 @@ print -depsc af_characteristics_blind_eq
 
 
 %Generate Input Data
-s_n = randi([0 1], 1, s_length); %generate random binary sequence
+s_n_orig = randi([0 1], 1, s_length); %generate random binary sequence
+s_n = s_n_orig;
 s_n(~s_n) = -1; %replace all 0s with -1s
 %add noise
 x_n = awgn(conv(s_n, h_n, 'same'), SNR);
@@ -193,7 +194,7 @@ M = 16; %Reset to Default
 
 err = zeros(1,60);
 %Change input length
-for s_length=10000:1000:69000
+for s_length=1000:1000:60000
     %Generate Input Data
     s_n = randi([0 1], 1, s_length); %generate random binary sequence
     s_n(~s_n) = -1; %replace all 0s with -1s
@@ -221,20 +222,19 @@ for s_length=10000:1000:69000
     %align corrected signal with input signal to determine error
     aligned_cs = corrected_signal(delay+1:end);
     aligned_sn = s_n(1:end-delay);
-    err(s_length/1000 - 9) = immse(aligned_cs, aligned_sn);
+    err(s_length/1000) = immse(aligned_cs, aligned_sn);
 
 end
 
 figure;
-plot([10000:1000:69000],err, 'o');
+plot([1000:1000:50000],err, 'o');
 title('Effects of Training Length');
 xlabel('Input Signal s[n] Length');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
 print -depsc training_length_effects_blind_eq
 
 s_length = 50000;
-s_n = randi([0 1], 1, s_length); %generate random binary sequence
-s_n(~s_n) = -1; %replace all 0s with -1s
+s_n = s_n_orig;
 
 err = zeros(1,15);
 
@@ -269,8 +269,8 @@ plot([20:1:35],err, 'o');
 title('Effects of SNR');
 xlabel('SNR (dB)');
 ylabel({'Mean Squared Error', ' Between Corrected and Desired'});
-SNR = 25; %Reset to Default
 print -depsc snr_effects_blind_eq
+SNR = 30; %Reset to Default
 
 err = zeros(1,7); 
 
